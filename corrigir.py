@@ -5,7 +5,7 @@ from difflib import get_close_matches
 from collections import Counter
 
 # --- CONFIGURAÇÃO ---
-caminho = r"C:\Users\Dan\Documents\projetinho\Planilha financeira DANIEL.xlsx"
+caminho = r"C:\\Users\Dan\\Documents\\projetinho\\planilha_de_servico.xlsx"
 aba = "GERAL"
 
 # --- FUNÇÕES DE LIMPEZA ---

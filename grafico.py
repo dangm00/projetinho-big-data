@@ -5,7 +5,7 @@ import plotly.express as px
 
 # ler planilha
 
-caminho = r"C:\Users\Dan\Documents\projetinho\Planilha financeira DANIEL.xlsx"
+caminho = r"C:\\Users\\Dan\\Documents\\projetinho\\planilha_de_servico.xlsx"
 df = pd.read_excel(caminho, sheet_name="GERAL")
 
 
@@ -116,7 +116,6 @@ fig_bar_servicos = px.bar(
     servicos_quantidade,
     x="SERVICO",
     y="QTD",
-    title="👨‍🔧 Quantidade de Serviços Realizados",
     text="QTD"
 )
 fig_bar_servicos.update_layout(xaxis_title="Serviço", yaxis_title="Quantidade")
