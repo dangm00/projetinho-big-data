@@ -5,7 +5,7 @@ import plotly.express as px
 
 # ler planilha
 
-caminho = r"C:\\Users\\Dan\\Documents\\projetinho\\planilha_de_servico.xlsx"
+caminho = r"C:\\Users\\Dan\\Documents\\projetinho\\planilha_de_servicos.xlsx"
 df = pd.read_excel(caminho, sheet_name="GERAL")
 
 

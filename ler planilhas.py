@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Caminho da planilha
-caminho = r"C:\\Users\\Dan\Documents\\projetinho\\planilha_de_servico.xlsx"
+caminho = r"C:\\Users\\Dan\Documents\\projetinho\\planilha_de_servicos.xlsx"
 
 # Ler a aba GERAL
 df = pd.read_excel(caminho, sheet_name="GERAL")
