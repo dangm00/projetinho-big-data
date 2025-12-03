@@ -19,3 +19,4 @@ class Dashboard:
             "mes": self.view.barra_mes(df_filtrado),
             "regiao": self.view.barra_regiao(df_filtrado)
         }, filtros_ativos, df_filtrado
+    
