@@ -3,14 +3,12 @@ import streamlit as st
 import plotly.express as px
 
 
-#Ler a planilha com caminho
-
+# Ler a planilha
 caminho = r"C:\Users\Dan\Documents\projetinho\planilha_de_servicos.xlsx"
 df = pd.read_excel(caminho, sheet_name="GERAL")
 
 
 # Padronizar os textos
-
 def normalizar(texto):
     if isinstance(texto, str):
         texto = texto.upper()
@@ -24,12 +22,19 @@ def normalizar(texto):
         texto = texto.strip()
     return texto
 
+
 # Preencher SERVICO
 df["SERVICO"] = df["SERVIÇO"].fillna("NAO TRABALHADO").apply(normalizar)
 
-# Preencher REGIAO com base no SERVICO(necessario pois a planilha estava bem suja)
+
+# Preencher REGIAO com base no SERVICO
 def definir_regiao(servico):
     servico = str(servico).upper()
+
+   
+    if servico == "NAO TRABALHADO":
+        return "SEM REGIAO"
+
     if "INSTALACAO" in servico:
         return "BAIXADA"
     elif "MANUTENCAO" in servico:
@@ -42,8 +47,7 @@ def definir_regiao(servico):
 df["REGIAO"] = df["SERVICO"].apply(definir_regiao).apply(normalizar)
 
 
-# TRatamento das datas(codigo estava sujo)
-
+# Tratamento das datas
 df["DATA"] = pd.to_datetime(df["DATA"])
 df["MES"] = df["DATA"].dt.to_period("M").astype(str)
 df["TRABALHOU"] = df["SERVICO"] != "NAO TRABALHADO"
@@ -53,20 +57,19 @@ df["TRABALHOU"] = df["SERVICO"] != "NAO TRABALHADO"
 
 st.sidebar.title("📌 Filtros do Dashboard")
 
-# Serviços
 filtro_servico = st.sidebar.multiselect(
     "Filtrar por serviço:",
     sorted(df["SERVICO"].unique()),
     default=sorted(df["SERVICO"].unique())
 )
 
-# Datas
+
 filtro_datas = st.sidebar.date_input(
     "Filtrar por datas:",
     [df["DATA"].min().date(), df["DATA"].max().date()]
 )
 
-# Aplicar filtros
+
 df_filtrado = df[df["SERVICO"].isin(filtro_servico)]
 df_filtrado = df_filtrado[
     (df_filtrado["DATA"].dt.date >= filtro_datas[0]) &
@@ -74,19 +77,20 @@ df_filtrado = df_filtrado[
 ]
 
 
-#  DASHBOARD PRINCIPAL
+
+# DASHBOARD PRINCIPAL
 
 st.subheader("Dados Filtrados")
 st.dataframe(df_filtrado)
 
-# Verificar se algum filtro está ativo
+# Verificar oss filtros
 filtros_ativos = (
     set(filtro_servico) != set(df["SERVICO"].unique()) or
     filtro_datas[0] != df["DATA"].min().date() or
     filtro_datas[1] != df["DATA"].max().date()
 )
 
-#Gráfico de Pizza: Trabalhado x Não Trabalhado
+# Gráfico de Pizza de Trabalhado x Não Trabalhado
 if not filtros_ativos:
     dias_trabalhados = df_filtrado["TRABALHOU"].sum()
     dias_nao_trabalhados = len(df_filtrado) - dias_trabalhados
@@ -107,7 +111,8 @@ if not filtros_ativos:
 else:
     st.info("🍕 Gráfico de pizza oculto enquanto algum filtro está ativo")
 
-#Gráfico de Linha: Ganhos por Dia
+
+# Gráfico de Linha contando Ganhos por Dia
 ganhos_por_dia = df_filtrado.groupby("DATA")["GANHOS"].sum().reset_index()
 fig_linha = px.line(
     ganhos_por_dia,
@@ -119,7 +124,8 @@ fig_linha = px.line(
 fig_linha.update_layout(xaxis_title="Data", yaxis_title="Ganhos")
 st.plotly_chart(fig_linha, use_container_width=True)
 
-# Gráfico de Barra: Serviços mais Realizados
+
+# Gráfico de Barra Contando os Serviços mais Realizados
 servicos_quantidade = df_filtrado.groupby("SERVICO").size().reset_index(name="QTD")
 fig_bar_servicos = px.bar(
     servicos_quantidade,
@@ -130,7 +136,8 @@ fig_bar_servicos = px.bar(
 fig_bar_servicos.update_layout(xaxis_title="Serviço", yaxis_title="Quantidade")
 st.plotly_chart(fig_bar_servicos, use_container_width=True)
 
-#Gráfico de Barra: Ganhos por Mês
+
+# Gráfico de Barra de Ganhos por Mês
 ganhos_por_mes = df_filtrado.groupby("MES")["GANHOS"].sum().reset_index()
 fig_bar_mes = px.bar(
     ganhos_por_mes,
@@ -146,7 +153,8 @@ fig_bar_mes.update_layout(
 )
 st.plotly_chart(fig_bar_mes, use_container_width=True)
 
-# Gráfico de Barra: Quantidade por Região
+
+# Gráfico de Barra Com a Quantidade por Região
 regioes_quantidade = df_filtrado.groupby("REGIAO").size().reset_index(name="QTD")
 fig_bar_regioes = px.bar(
     regioes_quantidade,
